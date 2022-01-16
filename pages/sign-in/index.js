@@ -9,12 +9,23 @@ import {
   FormHelperText,
 } from '@chakra-ui/react'
 import { Nav } from '../../components/Nav';
+import { useForm } from "react-hook-form";
+import { supabase } from '../../frameworks/supabase';
+import { useRouter } from 'next/router'
 
 
 export default function SignIn() {
   const theme = useTheme();
-  const submit = (e) => {
-    console.log(e)
+  const { register, handleSubmit } = useForm();
+  const router = useRouter()
+  
+  const submit = async (data) => {
+    console.log(data)
+    let {user, error} = await supabase.auth.signIn(data);
+    console.log(user, error)
+    if(user)
+      router.push('/discover')
+
   }
 
   return <div>
@@ -33,15 +44,15 @@ export default function SignIn() {
           <Divider />
      
        
-          <form onSubmit={submit} style={{width:"100%"}}>
+          <form onSubmit={handleSubmit(submit)} style={{width:"100%"}}>
             <VStack my='2em'>
             <FormControl id='email' isRequired>
 
-              <Input borderRadius={12} py='20px' placeholder='email' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
+              <Input {...register('email')} type={'email'} borderRadius={12} py='20px' placeholder='email' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
             </FormControl>
 
             <FormControl id='password' isRequired>
-              <Input borderRadius={12} py='20px' placeholder='password' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
+              <Input {...register('password')} type={'password'} borderRadius={12} py='20px' placeholder='password' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
             </FormControl>
             </VStack>
           

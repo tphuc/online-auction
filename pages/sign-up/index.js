@@ -9,13 +9,32 @@ import {
   FormHelperText,
 } from '@chakra-ui/react'
 import { Nav } from '../../components/Nav';
+import { useForm } from "react-hook-form";
+import { supabase } from '../../frameworks/supabase';
 
 
 export default function SignIn() {
   const theme = useTheme();
-  const submit = (e) => {
-    console.log(e)
+
+
+  const { register, handleSubmit } = useForm();
+
+  const submit = async (data) => {
+    
+    const {email, password, ...rest} = data
+    console.log(rest)
+    let { user, error } = await supabase.auth.signUp({
+      email: email,
+      password: password, 
+    }, {
+      data: {
+        ...rest
+      }
+    })
+
+    console.log(user, error)
   }
+  
 
   return <div>
     <Container background={'gradient.300'} mx={0} maxW='100vw' centerContent>
@@ -33,33 +52,30 @@ export default function SignIn() {
           <Divider />
      
        
-          <form onSubmit={submit} style={{width:"100%"}}>
+          <form onSubmit={handleSubmit(submit)} style={{width:"100%"}}>
             <VStack>
-            <FormControl id='name' isRequired>
-              <Input borderRadius={12} py='20px' placeholder='John doe' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
+            <FormControl id='full_name' isRequired>
+              <Input {...register('full_name', {required: true})} type='text'  borderRadius={12} py='20px' placeholder='full name' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
             </FormControl>
             <FormControl id='email' isRequired>
 
-              <Input borderRadius={12} py='20px' placeholder='email' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
+              <Input {...register('email', {required: true})}  type={'email'} borderRadius={12} py='20px' placeholder='email' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
             </FormControl>
             <FormControl id='address' isRequired>
-              <Input borderRadius={12} py='20px' placeholder='address' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
+              <Input {...register('address', {required: true})} type={'text'}  borderRadius={12} py='20px' placeholder='address' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
             </FormControl>
             <FormControl id='password' isRequired>
-              <Input borderRadius={12} py='20px' placeholder='password' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
+              <Input {...register('password', {required: true})}  type='password' borderRadius={12} py='20px' placeholder='password' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
             </FormControl>
-            <FormControl id='confirm_password' isRequired>
-              <Input borderRadius={12} py='20px' placeholder='password confirm' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
-            </FormControl>
-            <FormControl id='seller' isRequired>
-              <Checkbox colorScheme={'brand'} defaultIsChecked>I am a seller </Checkbox>
+            <FormControl id='upgrade_seller' isRequired>
+              <Checkbox {...register('upgrade_seller', {required: true})} type='text'  colorScheme={'brand'} defaultIsChecked>Sign up as seller</Checkbox>
             </FormControl>
             </VStack>
           
   
 
           <Spacer h={5} />
-          <Button type='submit'  borderRadius={12} py='24px' variant={'solid'} colorScheme={'brand'} width={'100%'}>Sign Up With Email</Button>
+          <Button type='submit'  borderRadius={12} py='24px' variant={'solid'} colorScheme={'brand'} width={'100%'}>Sign Up</Button>
           </form>
         </VStack>
       </Flex>

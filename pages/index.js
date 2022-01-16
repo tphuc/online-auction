@@ -20,6 +20,7 @@ export default function Home() {
           <Text fontWeight={'bold'} fontSize={'5xl'}>Ubid Online Auction</Text>
           <Text fontSize={'3xl'} color='gray.600'>Discover, collect, and sell valuable items </Text>
           <HStack>
+          <Link  passHref href={'/discover'}>
           <Box
             my={'20px'}
             display={'flex'}
@@ -42,10 +43,13 @@ export default function Home() {
               borderColor: theme.colors.brand[100],
             }}
           >
-            <Text >Discover</Text>
+           
+              <Text >Discover</Text>
+           
             <Icon ml='1em' as={RiArrowRightLine}/>
           </Box>
-          <Link href='/sign-up'>
+          </Link>
+          <Link passHref href='/sign-up'>
           <Box
             as='button'
             width='220px'
