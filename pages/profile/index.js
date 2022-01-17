@@ -15,6 +15,7 @@ import { useUserInventory } from '../../frameworks/supabase/swr/use-user-invento
 import { FileUpload } from '../../components/FileUpload';
 import { useCategories } from '../../frameworks/supabase/swr/use-categories';
 import { createItem } from '../../frameworks/supabase/api/items';
+import { useUserWishlist } from '../../frameworks/supabase/swr/use-wishlist';
 
 
 export default function Profile({ }) {
@@ -25,7 +26,8 @@ export default function Profile({ }) {
     const { data: categories } = useCategories();
     const { data: user, mutate } = useUser(auth?.id)
     const { data: onSaleItems } = useUserOnsale(auth?.id)
-    const { data: inventoryItems } = useUserInventory(auth?.id)
+    const { data: inventoryItems } = useUserInventory(auth?.id);
+    const { data: wishlistItems } = useUserWishlist(auth?.id);
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { data: bidHistory } = useUserBids(auth?.id)
     const [isLoading, setLoading] = React.useState(false);
@@ -54,7 +56,7 @@ export default function Profile({ }) {
 
 
         let res = await createItem(data);
-        console.log(res)
+
         if (!res.error) {
             toast({
                 title: `Add item success!`,
@@ -121,7 +123,13 @@ export default function Profile({ }) {
                             </Box>)}
                         </Grid>
                     </TabPanel>
-                    <TabPanel></TabPanel>
+                    <TabPanel>
+                    <Grid templateColumns='repeat(auto-fill, minmax(320px,1fr ))' columnGap={'2em'} rowGap={'2em'}>
+                            {wishlistItems?.map((item, id) => <Box display={'flex'} justifyContent={"center"} alignItems={"center"} key={id} width={'100%'}>
+                                <ProductCard data={item?.item} />
+                            </Box>)}
+                        </Grid>
+                    </TabPanel>
                     <TabPanel>
                         <Container centerContent maxW='md'>
                             {
@@ -129,7 +137,7 @@ export default function Profile({ }) {
                                     <Text color='gray.600' fontSize={'sm'} textTransform={'uppercase'}>{new Date(item?.created_at).toLocaleString()}</Text>
                                     <Text noOfLines={1}>
                                         <Text as='span' color='brand.400'> you </Text> offered
-                                        <Link href={`/item/${item.items.id}`}>
+                                        <Link passHref href={`/item/${item?.items?.id}`}>
                                             <Text cursor={'pointer'} decoration={'underline'} as='span' color='brand.450'> {item?.items?.label} </Text>
                                         </Link>
                                         for <Text as='span' color='brand.400'>{item.amount}$</Text>

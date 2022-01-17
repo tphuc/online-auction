@@ -1,12 +1,14 @@
-import { Box, Container, Divider, Grid, Menu, MenuButton, Button, MenuItem, MenuList, Spacer, Text, Icon, MenuOptionGroup, MenuItemOption, Select, Input, Spinner } from '@chakra-ui/react';
+import { Box, Container, Divider, Grid, Menu, MenuButton, Button, MenuItem, MenuList, Spacer, Text, Icon, MenuOptionGroup, MenuItemOption, Select, Input, Spinner, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { Nav } from '../../components/Nav';
 import { ProductCard } from '../../components/ProductCard';
-import { RiArrowDownLine, RiArrowDropDownLine } from 'react-icons/ri'
+import { RiArrowDownLine, RiArrowDropDownLine, RiHeart3Fill } from 'react-icons/ri'
 import { useCategories } from '../../frameworks/supabase/swr/use-categories';
 import { useItems } from '../../frameworks/supabase/swr/use-items';
 import { Pagination } from '../../components/Pagination';
 import { MAX_ITEMS_PER_PAGE } from '../../config';
+import { WishlistAPI } from '../../frameworks/supabase/api/wishlists';
+import { supabase } from '../../frameworks/supabase';
 
 
 export default function Discover() {
@@ -20,9 +22,38 @@ export default function Discover() {
         page: 1
     })
 
+    const toast = useToast();
+
     const { data: items, isLoading, count } = useItems(filter);
 
-
+    const addToWishlist = async (item) => {
+        const user = supabase.auth.user();
+        if(!user){
+            toast({
+                title: `Please sign in first`,
+                isClosable: true,
+            })
+            return;
+        }
+        const { data, error } = await WishlistAPI.addToWishlist({
+            item: item?.id,
+            user: user?.id
+        })
+        if(!error){
+            toast({
+                title: `Added to wishlist`,
+                status: 'success',
+                isClosable: true,
+            })
+        }
+        else {
+            toast({
+                title: 'Already in wishlist',
+                status: 'error',
+                isClosable: true,
+            })
+        }
+    }
 
 
     return <Box minHeight={'100vh'} >
@@ -49,7 +80,7 @@ export default function Discover() {
                 <Spacer h={5} />
                 <Grid templateColumns='repeat(auto-fill, minmax(250px,1fr ))' columnGap={'2em'} rowGap={'2em'}>
                     {items?.map((item, id) => <Box display={'flex'} justifyContent={"center"} alignItems={"center"} key={id} width={'100%'}>
-                        <ProductCard data={item} />
+                        <ProductCard actionIcon={<RiHeart3Fill/>} onActionClick={() => addToWishlist(item)} data={item} />
                     </Box>)}
 
                 </Grid>
