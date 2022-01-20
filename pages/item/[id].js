@@ -166,10 +166,13 @@ export default function ItemPage({ data: _data }) {
                         </HStack>
                         <Text fontWeight={'bold'} color='brand.500' fontSize={'sm'}>Bid step: {data.step_bid}$</Text>
                         <Spacer h={2} />
-                        {
-                            data?.is_expired ? <Text color='brand.300' align={'center'}>Auction has finished</Text>
-                                :
 
+                        {
+                            data?.is_expired ? <div>
+                                    <Text color='brand.300' align={'center'}>Auction has finished</Text>
+                                    {data?.bids?.length && <Text color='brand.300' align={'center'}>Obtained by <b>{data?.bids?.[data?.bids?.length - 1]?.users?.full_name}</b> </Text>}
+                                </div>
+                                :
                                 <HStack>
                                     <Input value={bid} onChange={e => setBid(e.target.valueAsNumber)} type={'number'} borderRadius={12} py='24px' placeholder='enter amount' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
                                     <Box
@@ -239,7 +242,7 @@ export default function ItemPage({ data: _data }) {
                             <Divider />
                             <TabPanels >
                                 <TabPanel>
-                                    <Text>{data.description}</Text>
+                                    <div dangerouslySetInnerHTML={{__html: data.description }}></div>
                                 </TabPanel>
                                 <TabPanel>
                                     {bids?.map((item, id) => <BidItem key={id} data={item} />)}

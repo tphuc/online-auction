@@ -29,7 +29,7 @@ export function ProductCard({ data, actionIcon, onActionClick }) {
         <Box  >
             <Box display={'flex'} flexDirection={'row'} width={'100%'} alignItems={'center'} justifyContent={'space-between'}>
                 <Text noOfLines={1} mt='0.5em' fontWeight={'bold'} fontSize='xl'>{data?.label}</Text>
-                <Text ml={'1em'} color='brand.500' as='span' mt='0.5em' fontWeight={'bold'} fontSize='xl' >200$</Text>
+                <Text ml={'1em'} color='brand.500' as='span' mt='0.5em' fontWeight={'bold'} fontSize='xl' >{data?.bids?.length ? data?.bids?.[data?.bids?.length - 1].amount : data.min_bid}$</Text>
             </Box>
 
             <Box display={'flex'} flexDirection={'row'} width={'100%'} justifyContent={'space-between'}>

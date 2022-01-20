@@ -14,6 +14,7 @@
     "@emotion/styled": "^11",
     "@supabase/supabase-js": "^1.28.5",
     "framer-motion": "^4",
+    "jodit-react": "^1.1.18",
     "next": "12.0.1",
     "react": "17.0.2",
     "react-countdown-hook": "^1.1.1",

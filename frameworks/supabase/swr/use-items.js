@@ -20,7 +20,10 @@ const fetcher = async (ENDPOINT, filter) => {
             *
         ),
         bids (
-            *
+            *,
+            users (
+                *
+            )
         )
     `, { count: 'exact' })
 

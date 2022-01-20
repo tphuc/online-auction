@@ -16,7 +16,9 @@ import { FileUpload } from '../../components/FileUpload';
 import { useCategories } from '../../frameworks/supabase/swr/use-categories';
 import { createItem } from '../../frameworks/supabase/api/items';
 import { useUserWishlist } from '../../frameworks/supabase/swr/use-wishlist';
+import dynamic from 'next/dynamic'
 
+const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false})
 
 export default function Profile({ }) {
     const theme = useTheme()
@@ -25,7 +27,7 @@ export default function Profile({ }) {
     const auth = supabase.auth.user()
     const { data: categories } = useCategories();
     const { data: user, mutate } = useUser(auth?.id)
-    const { data: onSaleItems } = useUserOnsale(auth?.id)
+    const { data: onSaleItems, mutate: saleMutate } = useUserOnsale(auth?.id)
     const { data: inventoryItems } = useUserInventory(auth?.id);
     const { data: wishlistItems } = useUserWishlist(auth?.id);
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -33,6 +35,8 @@ export default function Profile({ }) {
     const [isLoading, setLoading] = React.useState(false);
 
     const {
+        getValues,
+        setValue,
         register,
         handleSubmit,
     } = useForm();
@@ -63,6 +67,7 @@ export default function Profile({ }) {
                 status: 'success',
                 isClosable: true,
             })
+            saleMutate();
             onClose()
         }
 
@@ -174,7 +179,14 @@ export default function Profile({ }) {
                         <Input color='brand.500' display={'block'} my='0.5em'  {...register('high_bid')} type='number' borderRadius={12} placeholder='Max bid' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
                         <Input color='brand.500' display={'block'} my='0.5em'  {...register('step_bid')} type='number' borderRadius={12} placeholder='Bid step' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
                         <Input color='brand.500' display={'block'} my='0.5em'  {...register('close_bid')} type='datetime-local' borderRadius={12} placeholder='End date' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
-                        <Textarea color='brand.500' _focus={{borderColor:"brand.500"}} {...register('description')} placeholder='Product description' />
+                        <JoditEditor
+
+                            value={getValues('description')}
+                            tabIndex={1} // tabIndex of textarea
+                            onBlur={newContent => setValue('description', newContent)} // preferred to use only this option to update the content for performance reasons
+
+            />
+                        {/* <Textarea color='brand.500' _focus={{borderColor:"brand.500"}} {...register('description')} placeholder='Product description' /> */}
                         <Button  my='1em' colorScheme={'brand'} type='submit' >submit</Button>
                     </FormControl>
                 </form>

@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Container, Divider, Flex, Input, Spacer, Text, VStack} from '@chakra-ui/react';
+import { Box, Button, Checkbox, Container, Divider, Flex, Input, Spacer, Text, toast, useToast, VStack} from '@chakra-ui/react';
 import { useTheme } from '@emotion/react';
 import React from 'react';
 import Link from 'next/link';
@@ -11,10 +11,12 @@ import {
 import { Nav } from '../../components/Nav';
 import { useForm } from "react-hook-form";
 import { supabase } from '../../frameworks/supabase';
+import router from 'next/router';
 
 
 export default function SignIn() {
   const theme = useTheme();
+  const toast = useToast();
 
 
   const { register, handleSubmit } = useForm();
@@ -32,7 +34,17 @@ export default function SignIn() {
       }
     })
 
-    console.log(user, error)
+    if(user){
+      router.push('/')
+    }
+    else{
+      toast({
+        title:"Signup failed",
+        description: error?.message
+      })
+    }
+
+
   }
   
 
@@ -67,8 +79,8 @@ export default function SignIn() {
             <FormControl id='password' isRequired>
               <Input {...register('password', {required: true})}  type='password' borderRadius={12} py='20px' placeholder='password' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
             </FormControl>
-            <FormControl id='upgrade_seller' isRequired>
-              <Checkbox {...register('upgrade_seller', {required: true})} type='text'  colorScheme={'brand'} defaultIsChecked>Sign up as seller</Checkbox>
+            <FormControl id='upgrade_seller' isRequired={false}>
+              <Checkbox {...register('upgrade_seller', {required: false})} type='text'  colorScheme={'brand'} defaultIsChecked>Request upgrade as seller</Checkbox>
             </FormControl>
             </VStack>
           

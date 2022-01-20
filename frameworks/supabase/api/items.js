@@ -37,7 +37,10 @@ export async function getAllItems(){
             *
         ),
         bids (
-            *
+            *,
+            users (
+                *
+            )
         )
     `)
     return res
@@ -52,7 +55,10 @@ export async function getItem(id){
             *
         ),
         bids (
-            *
+            *,
+            users (
+                *
+            )
         )
     `).match({id})
 
