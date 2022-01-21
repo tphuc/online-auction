@@ -23,7 +23,7 @@ export function ProductCard({ data, actionIcon, onActionClick }) {
        {actionIcon && <IconButton onClick={onActionClick} borderRadius={'50%'} style={{ position: "absolute", top: 5, right: 5, zIndex: 10 }} color='brand.600' icon={<RiHeart3Fill />} />}
         <div style={{ position: "relative", cursor: "pointer", zIndex: 1, overflow: "hidden", borderRadius: 24, background: theme.colors.brand['000'] }} >
             <Link passHref={true} href={`/item/${data.id}`}>
-                <Image width={300} height={300} transition='0.4s ease' _hover={{ transform: 'scale(1.08)', borderRadius: 20, transition: "0.6s ease all" }} src={data?.images?.length && data?.images[0]?.url} alt={''} />
+                <Image style={{objectFit:'cover'}} width={300} height={300} transition='0.4s ease' _hover={{ transform: 'scale(1.08)', borderRadius: 20, transition: "0.6s ease all" }} src={data?.images?.length && data?.images[0]?.url} alt={''} />
             </Link>
         </div>
         <Box  >

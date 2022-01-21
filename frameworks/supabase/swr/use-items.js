@@ -37,6 +37,9 @@ const fetcher = async (ENDPOINT, filter) => {
                 case 'category':
                     res = res.filter('category', 'eq', parseInt(filter[k]))
                     break
+                case 'sort':
+                    res = res.order(filter[k], {ascending:true})
+                    break
             }
         }
     }

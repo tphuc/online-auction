@@ -35,6 +35,7 @@ export default function Profile({ }) {
     const [isLoading, setLoading] = React.useState(false);
 
     const {
+        reset,
         getValues,
         setValue,
         register,
@@ -67,6 +68,7 @@ export default function Profile({ }) {
                 status: 'success',
                 isClosable: true,
             })
+            reset();
             saleMutate();
             onClose()
         }
@@ -165,7 +167,7 @@ export default function Profile({ }) {
 
                             multiple
                             accept={'image/*'}
-                            register={register('file')}
+                            register={register('file', {required: true})}
                         >
                             <Button  borderRadius={'14px'} color='brand.500' bg='brand.000' leftIcon={<Icon as={RiUpload2Fill} />}>
                                 Upload
@@ -187,7 +189,7 @@ export default function Profile({ }) {
 
             />
                         {/* <Textarea color='brand.500' _focus={{borderColor:"brand.500"}} {...register('description')} placeholder='Product description' /> */}
-                        <Button  my='1em' colorScheme={'brand'} type='submit' >submit</Button>
+                        <Button isLoading={isLoading}  my='1em' colorScheme={'brand'} type='submit' >submit</Button>
                     </FormControl>
                 </form>
 

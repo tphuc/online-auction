@@ -1,1 +1,1 @@
-export const MAX_ITEMS_PER_PAGE = 4;
+export const MAX_ITEMS_PER_PAGE = 8;

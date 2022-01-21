@@ -13,7 +13,7 @@ export function Nav() {
   const router = useRouter()
   const user = supabase.auth.user()
   const session = supabase.auth.session()
-  console.log('user', user)
+
   return <Box><Flex py='1em' flexDirection={'row'} alignItems={'center'} px='2em'>
     <Link passHref href='/'>
       <Text cursor={'pointer'} fontWeight='extrabold' color='brand.500' fontSize={'3xl'}>Ubid</Text>

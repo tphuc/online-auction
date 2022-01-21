@@ -17,6 +17,7 @@ export default function Discover() {
   
 
     const [filter, setFilter] = React.useState({
+        sort: '',
         category: '',
         label: '',
         page: 1
@@ -70,6 +71,10 @@ export default function Discover() {
                         {categories?.map((item, id) => <option key={id} value={item.id}>{item.label}</option>)}
                         <option value={''}>all</option>
                     </Select>
+                    <Select ml='1em'  display={'inline-block'} color='brand.500' colorScheme={'brand'} borderRadius={'14px'} my='0.5em' onChange={(e) => setFilter({ ...filter, sort: e.target.value })} value={filter.sort} bg={'brand.000'} borderWidth={0} _hover={{ background: "brand.100" }} variant={'filled'} placeholder='Sorted by'>
+                        <option value={'min_bid'}>Price low to high</option>
+                        <option value={'close_bid'}>Ending time</option>
+                    </Select>
                     <Input ml='2em' onKeyDown={(e) => {
                     if (e.key == 'Enter') {
                         setFilter({...filter, label:e.target.value})
@@ -79,7 +84,7 @@ export default function Discover() {
 
                 <Spacer h={5} />
                 <Grid templateColumns='repeat(auto-fill, minmax(250px,1fr ))' columnGap={'2em'} rowGap={'2em'}>
-                    {items?.map((item, id) => <Box display={'flex'} justifyContent={"center"} alignItems={"center"} key={id} width={'100%'}>
+                    {items?.map((item, id) => <Box display={'flex'} justifyContent={"center"} alignItems={"center"} key={item?.id} width={'100%'}>
                         <ProductCard actionIcon={<RiHeart3Fill/>} onActionClick={() => addToWishlist(item)} data={item} />
                     </Box>)}
 

@@ -75,8 +75,9 @@ export default function ItemPage({ data: _data }) {
 
     React.useEffect(() => {
         const subcription = supabase
-            .from('bids')
+            .from(`bids:item=eq.${_data.id}`)
             .on('*', (payload) => {
+                console.log(80,payload)
                 bidsMutate()
             })
             .subscribe((e) => console.log(e))
