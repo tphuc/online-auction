@@ -1,7 +1,7 @@
-import { TabList, TabPanel, TabPanels, Tab, Tabs, useTheme, Container, VStack, Grid, Avatar, Text, Spacer, Box, Divider, Icon, Button, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, FormControl, Select, Input, Textarea } from '@chakra-ui/react';
+import { TabList, TabPanel, TabPanels, Tab, Tabs, useTheme, Container, VStack, Grid, Avatar, Text, Spacer, Box, Divider, Icon, Button, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, FormControl, Select, Input, Textarea, Center } from '@chakra-ui/react';
 import React from 'react';
 import { Nav } from '../../components/Nav';
-import { RiAddBoxLine, RiCheckboxBlankLine, RiCheckboxCircleFill, RiCheckboxCircleLine, RiHeart3Fill, RiHistoryFill, RiPriceTag3Fill, RiShoppingBag2Fill, RiUpload2Fill } from 'react-icons/ri'
+import { RiAddBoxLine, RiCheckboxBlankLine, RiCheckboxCircleFill, RiCheckboxCircleLine, RiHeart3Fill, RiHistoryFill, RiPriceTag3Fill, RiSettings3Fill, RiShoppingBag2Fill, RiUpload2Fill } from 'react-icons/ri'
 import { supabase } from '../../frameworks/supabase';
 import { useRouter } from 'next/router'
 import { useUser } from '../../frameworks/supabase/swr/use-user';
@@ -18,7 +18,7 @@ import { createItem } from '../../frameworks/supabase/api/items';
 import { useUserWishlist } from '../../frameworks/supabase/swr/use-wishlist';
 import dynamic from 'next/dynamic'
 
-const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false})
+const JoditEditor = dynamic(() => import('jodit-react'), { ssr: false })
 
 export default function Profile({ }) {
     const theme = useTheme()
@@ -33,6 +33,16 @@ export default function Profile({ }) {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { data: bidHistory } = useUserBids(auth?.id)
     const [isLoading, setLoading] = React.useState(false);
+
+    const { register: infoRegister, reset: setInfoValue, handleSubmit: infoHandleSubmit } = useForm();
+
+    React.useEffect(() => {
+        if(user){
+            setInfoValue(
+                { full_name: user?.full_name, address: user?.address }
+            )
+        }
+    }, [user, setInfoValue])
 
     const {
         reset,
@@ -56,10 +66,8 @@ export default function Profile({ }) {
         }
     }
 
-    const onSubmit = async (data) => {
+    const onSubmitItem = async (data) => {
         setLoading(true)
-
-
         let res = await createItem(data);
 
         if (!res.error) {
@@ -72,7 +80,21 @@ export default function Profile({ }) {
             saleMutate();
             onClose()
         }
+        setLoading(false)
 
+    }
+
+    const onUpdateUserInfo = async (data) => {
+        setLoading(true)
+        let res = await updateUser(data);
+        if (!res.error) {
+            toast({
+                title: `Update information successfully`,
+                status: 'success',
+                isClosable: true,
+            })
+            mutate()
+        }
         setLoading(false)
 
     }
@@ -81,8 +103,8 @@ export default function Profile({ }) {
     return <div>
         <Nav />
         <Container mx={0} px={0} maxW='100vw' centerContent>
-            <Spacer h={'2em'} />
-            <Avatar bg='brand.100' color='brand.500' name={user?.full_name} size={'md'} />
+            <Spacer h={'20px'} />
+            <Avatar mt='20px' bg='brand.100' color='brand.500' name={user?.full_name} size={'md'} />
             <Text color='brand.700' fontSize={'xl'}>{user?.full_name}</Text>
             <Spacer h={'1em'} />
             {
@@ -111,6 +133,7 @@ export default function Profile({ }) {
                         <Tab whiteSpace={'nowrap'} color='brand.400' px='2em' mx='0.5em' py='1em' borderRadius={20} _focus={{ border: `none` }} _selected={{ border: "none", color: 'white', bg: 'brand.600' }}>Items <Icon ml={'0.5em'} as={RiShoppingBag2Fill} /> </Tab>
                         <Tab whiteSpace={'nowrap'} color='brand.400' px='2em' mx='0.5em' py='1em' borderRadius={20} _focus={{ border: `none` }} _selected={{ border: "none", color: 'white', bg: 'brand.600' }}>Watchlist <Icon ml={'0.5em'} as={RiHeart3Fill} /> </Tab>
                         <Tab whiteSpace={'nowrap'} color='brand.400' px='2em' mx='0.5em' py='1em' borderRadius={20} _focus={{ border: `none` }} _selected={{ border: "none", color: 'white', bg: 'brand.600' }}>Activity <Icon ml={'0.5em'} as={RiHistoryFill} /></Tab>
+                        <Tab whiteSpace={'nowrap'} color='brand.400' px='2em' mx='0.5em' py='1em' borderRadius={20} _focus={{ border: `none` }} _selected={{ border: "none", color: 'white', bg: 'brand.600' }}>Setting <Icon ml={'0.5em'} as={RiSettings3Fill} /></Tab>
                     </Box>
 
                 </TabList>
@@ -131,7 +154,7 @@ export default function Profile({ }) {
                         </Grid>
                     </TabPanel>
                     <TabPanel>
-                    <Grid templateColumns='repeat(auto-fill, minmax(320px,1fr ))' columnGap={'2em'} rowGap={'2em'}>
+                        <Grid templateColumns='repeat(auto-fill, minmax(320px,1fr ))' columnGap={'2em'} rowGap={'2em'}>
                             {wishlistItems?.map((item, id) => <Box display={'flex'} justifyContent={"center"} alignItems={"center"} key={id} width={'100%'}>
                                 <ProductCard data={item?.item} />
                             </Box>)}
@@ -153,6 +176,18 @@ export default function Profile({ }) {
                             }
                         </Container>
                     </TabPanel>
+                    <TabPanel>
+                       
+                        <Center dir='column'>
+                      
+                        <form onSubmit={infoHandleSubmit(onUpdateUserInfo)}>
+                            <Text>Basic information</Text>
+                            <Input color='brand.500' display={'block'} my='0.5em'  {...infoRegister('full_name')} borderRadius={12} placeholder='Full name' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled'></Input>
+                            <Input color='brand.500' display={'block'} my='0.5em'  {...infoRegister('address')} borderRadius={12} placeholder='Full name' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled'></Input>
+                            <Button isLoading={isLoading} type='submit' width={'100%'} color='brand.500' bg='brand.000' >Update</Button>
+                        </form>
+                        </Center>
+                    </TabPanel>
                 </TabPanels>
             </Tabs>
         </Container>
@@ -161,20 +196,20 @@ export default function Profile({ }) {
             <ModalContent px='1em'>
                 <ModalHeader></ModalHeader>
                 <ModalCloseButton />
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmitItem)}>
                     <FormControl isRequired>
                         <FileUpload
 
                             multiple
                             accept={'image/*'}
-                            register={register('file', {required: true})}
+                            register={register('file', { required: true })}
                         >
-                            <Button  borderRadius={'14px'} color='brand.500' bg='brand.000' leftIcon={<Icon as={RiUpload2Fill} />}>
+                            <Button borderRadius={'14px'} color='brand.500' bg='brand.000' leftIcon={<Icon as={RiUpload2Fill} />}>
                                 Upload
                             </Button>
                         </FileUpload>
-                        <Select color='brand.500' colorScheme={'brand'} borderRadius={'14px'} my='0.5em' {...register('category')} bg={'brand.000'} borderWidth={0} _hover={{background:"brand.50"}} variant={'filled'} placeholder='Select category'>
-                            {categories?.map((item,id) => <option  key={id} value={item.id}>{item.label}</option>)}
+                        <Select color='brand.500' colorScheme={'brand'} borderRadius={'14px'} my='0.5em' {...register('category')} bg={'brand.000'} borderWidth={0} _hover={{ background: "brand.50" }} variant={'filled'} placeholder='Select category'>
+                            {categories?.map((item, id) => <option key={id} value={item.id}>{item.label}</option>)}
                         </Select>
                         <Input color='brand.500' display={'block'} my='0.5em'  {...register('label')} borderRadius={12} placeholder='Product name' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
                         <Input color='brand.500' display={'block'} my='0.5em'  {...register('min_bid')} type='number' borderRadius={12} placeholder='Min bid' focusBorderColor='brand.500' background={'brand.000'} _hover={{ background: 'brand.50' }} variant='filled' />
@@ -187,9 +222,9 @@ export default function Profile({ }) {
                             tabIndex={1} // tabIndex of textarea
                             onBlur={newContent => setValue('description', newContent)} // preferred to use only this option to update the content for performance reasons
 
-            />
+                        />
                         {/* <Textarea color='brand.500' _focus={{borderColor:"brand.500"}} {...register('description')} placeholder='Product description' /> */}
-                        <Button isLoading={isLoading}  my='1em' colorScheme={'brand'} type='submit' >submit</Button>
+                        <Button isLoading={isLoading} my='1em' colorScheme={'brand'} type='submit' >submit</Button>
                     </FormControl>
                 </form>
 
