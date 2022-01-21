@@ -56,7 +56,7 @@ export default function ItemPage({ data: _data }) {
 
     React.useEffect(() => {
         if (!user || !session) {
-            router.push('/login')
+            router.push('/sign-in')
         }
     }, [user, session, router])
 
