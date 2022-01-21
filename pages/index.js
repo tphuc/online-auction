@@ -104,7 +104,7 @@ export default function Home() {
         <Spacer h={3} />
         <Grid templateColumns='repeat(auto-fill, minmax(250px,1fr ))' columnGap={'2em'} rowGap={'2em'}>
           {endingItems?.map((item, id) => <Box display={'flex'} justifyContent={"center"} alignItems={"center"} key={id} width={'100%'}>
-            <ProductCard actionIcon={<RiHeart3Fill />} onActionClick={() => addToWishlist(item)} data={item} />
+            <ProductCard  data={item} />
           </Box>)}
 
         </Grid>
@@ -115,7 +115,7 @@ export default function Home() {
         <Spacer h={3} />
         <Grid templateColumns='repeat(auto-fill, minmax(250px,1fr ))' columnGap={'2em'} rowGap={'2em'}>
           {highestPriceItems?.map((item, id) => <Box display={'flex'} justifyContent={"center"} alignItems={"center"} key={id} width={'100%'}>
-            <ProductCard actionIcon={<RiHeart3Fill />} onActionClick={() => addToWishlist(item)} data={item} />
+            <ProductCard  data={item} />
           </Box>)}
 
         </Grid>
